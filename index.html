@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>oneLinerText</title>
+        <!-- <link rel="shortcut icon" href="https://myaccount.hetzner.co.za/favicon.ico" type="image/x-icon" /> -->
+        <!-- <link rel="stylesheet" type="text/css" href="css/normal.css" /> -->
+        <style type="text/css">
+            span.asot-wrap {
+				white-space: nowrap;
+			}
+        </style>
+        <!-- <script type="text/javascript" src="lib/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-3.0.0.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.domxy.js"></script>
+        <script type="text/javascript" src="lib/jquery.mousewheel.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-control-knob.js"></script> -->
+        <script type="text/javascript" src="jquery-3.0.0.min.js"></script>
+        <script type="text/javascript" src="jquery-one-liner-text.js"></script>
+        <script type="text/javascript">
+			/*
+				REFERENCE(S):
+					http://remysharp.com/2008/09/10/the-silky-smooth-marquee/
+			*/
+            (function (window, $) {
+                "use strict";
+                $(document).ready(function () {
+					$('.one-liner-text').oneLinerText();
+                });
+            }(window, (typeof jQuery === "function") ? jQuery : {}));
+        </script>
+    </head>
+    <body>
+		<h1>jQuery One-liner Text</h1>
+        <!-- Template by Jaycliff Arcilla -->
+        <p id="p-1" class="one-liner-text" style="width: 320px; background-color: #f0f0f0">
+			I am an overflowing text, annoying isn't it? Quite really...
+		</p>
+        <p id="p-2" class="one-liner-text" style="width: 320px; background-color: #f0f0f0">
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porttitor ante sit amet neque placerat, interdum porttitor lorem efficitur. Praesent vel dolor eu justo pretium venenatis. Morbi at risus sit amet arcu sagittis ornare. Phasellus arcu est, efficitur non viverra et, commodo a risus. Nulla eu erat id quam sollicitudin tincidunt vitae quis elit. Ut nec rutrum turpis. Curabitur quis neque ac diam consequat ullamcorper. Proin dignissim, mauris id gravida molestie, mauris sem aliquam arcu, auctor semper ligula erat sed urna.
+			
+			Aliquam placerat volutpat dapibus. Sed varius lectus eu varius finibus. Mauris egestas ligula turpis, nec congue arcu egestas et. Vivamus non ex ut orci efficitur consequat at in sapien. Fusce feugiat et massa at ullamcorper. Cras rhoncus pellentesque nisl eu ornare. Ut dolor leo, varius commodo mi vel, aliquet imperdiet enim. In sed sem sed justo elementum lobortis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas vel augue mollis, convallis magna id, semper justo. Ut condimentum nulla aliquam nisl fringilla fringilla.
+			
+			In tempor nisi maximus, vestibulum velit maximus, efficitur diam. Nullam eu ligula sed orci tempor hendrerit. Vivamus ac laoreet quam, a ultrices sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc mollis massa vel blandit elementum. Suspendisse ex urna, interdum eget nunc ut, pulvinar sodales urna. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent mattis tincidunt iaculis.
+			
+			Pellentesque nunc diam, dictum pretium condimentum non, bibendum in lorem. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur congue, velit a consectetur iaculis, orci purus eleifend ligula, eu ultrices libero odio sit amet leo. Suspendisse nec ipsum vitae turpis dapibus feugiat in id leo. Quisque id orci non ante pellentesque laoreet iaculis vitae ex. Etiam non odio ut libero fringilla iaculis non in erat. Curabitur sodales, augue sit amet consectetur aliquet, leo urna eleifend augue, ac euismod magna urna sed ligula.
+			
+			In diam justo, auctor lacinia posuere vel, imperdiet sed mi. Sed maximus sem vitae nibh pulvinar porta. In quis turpis interdum, feugiat felis sed, gravida magna. Donec vel cursus elit, nec lobortis nisl. Pellentesque vel aliquam lectus. Cras elit lectus, ornare a ornare vitae, scelerisque non sapien. In facilisis auctor est vitae pharetra. Etiam vitae tellus nec velit aliquam varius. Etiam ut dapibus lectus.
+		</p>
+        <p id="p-3" class="one-liner-text" style="width: 320px; background-color: #f0f0f0">
+			I am fine.
+		</p>
+    </body>
+</html>
