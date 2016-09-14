@@ -114,7 +114,7 @@
 		}
 		return function oneLinerText(param) {
 			if (typeof param === "string") {
-				if (param === "destroy") {
+				if (param === 'destroy') {
 					eachHandler._destroy = true;
 				}
 			}
