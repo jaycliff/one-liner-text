@@ -17,6 +17,7 @@
     DEPENDENCIES:
         jQuery library
 */
+/*global jQuery*/
 (function ($) {
 	"use strict";
 	$.fn.oneLinerText = (function () {
@@ -42,6 +43,7 @@
 			};
 		}());
 		function mouseHandler(event) {
+			/*jshint validthis:true*/
 			var $self = $.data(this, '$self'), animate_options = $.data(this, 'oneLinerText:animate_options'), scrollLeftMax;
 			switch (event.type) {
 			case 'mouseenter':
@@ -57,6 +59,7 @@
 			}
 		}
 		function eachHandler() {
+			/*jshint validthis:true*/
 			var destroy = !!eachHandler._destroy,
 				style,
 				prev_style,
