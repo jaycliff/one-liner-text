@@ -19,108 +19,135 @@
 */
 /*global jQuery*/
 (function ($) {
-	"use strict";
-	$.fn.oneLinerText = (function () {
-		var hasOwnProperty = Object.prototype.hasOwnProperty, pool_of_plain_objects = (function () {
-			var pool = [];
-			return {
-				summon: function () {
-					if (pool.length > 0) {
-						return pool.pop();
-					}
-					return {};
-				},
-				banish: function (obj) {
-					var key;
-					for (key in obj) {
-						if (hasOwnProperty.call(obj, key)) {
-							delete obj[key];
-						}
-					}
-					pool.push(obj);
-					return this;
-				}
-			};
-		}());
-		function mouseHandler(event) {
-			/*jshint validthis:true*/
-			var $self = $.data(this, '$self'), animate_options = $.data(this, 'oneLinerText:animate_options'), scrollLeftMax;
-			switch (event.type) {
-			case 'mouseenter':
-				// http://stackoverflow.com/questions/5138373/how-do-i-get-the-max-value-of-scrollleft
-				scrollLeftMax = this.scrollWidth - this.clientWidth;
-				animate_options.scrollLeft = scrollLeftMax;
-				$self.stop(true).animate(animate_options, scrollLeftMax * 10, 'linear');
-				break;
-			case 'mouseleave':
-				animate_options.scrollLeft = 0;
-				$self.stop(true).animate(animate_options, Math.min(this.scrollLeft * 1, 100), 'linear');
-				break;
-			}
-		}
-		function eachHandler() {
-			/*jshint validthis:true*/
-			var destroy = !!eachHandler._destroy,
-				style,
-				prev_style,
-				key,
-				self = this,
-				$self = $.data(self, '$self'),
-				inner_width;
-			if (!($self instanceof $)) {
-				$self = $(self);
-				$.data(self, '$self', $self);
-			}
-			if (!$self.data('oneLinerText:yes')) {
-				if (!destroy) {
-					style = self.style;
-					prev_style = pool_of_plain_objects.summon();
-					inner_width = $self.innerWidth();
-					if (style.overflowX !== 'hidden') {
-						prev_style.overflowX = style.overflowX;
-						style.overflowX = 'hidden';
-					}
-					if (style.whiteSpace !== 'nowrap') {
-						prev_style.whiteSpace = style.whiteSpace;
-						style.whiteSpace = 'nowrap';
-					}
-					if (inner_width < self.scrollWidth) {
-						//console.log(self.id + ': innerWidth -> ' + inner_width + ', scrollWidth -> ' + self.scrollWidth);
-						$self.data('oneLinerText:yes', true).data('oneLinerText:prev_style', prev_style).data('oneLinerText:animate_options', pool_of_plain_objects.summon()).on('mouseenter mouseleave', mouseHandler);
-					} else {
-						for (key in prev_style) {
-							if (hasOwnProperty.call(prev_style, key)) {
-								style[key] = prev_style[key];
-								delete prev_style[key];
-							}
-						}
-						pool_of_plain_objects.banish(prev_style);
-					}
-				}
-			} else {
-				if (destroy) {
-					style = self.style;
-					prev_style = $self.data('oneLinerText:prev_style');
-					for (key in prev_style) {
-						if (hasOwnProperty.call(prev_style, key)) {
-							style[key] = prev_style[key];
-							delete prev_style[key];
-						}
-					}
-					pool_of_plain_objects.banish(prev_style).banish($self.data('oneLinerText:animate_options'));
-					$self.data('oneLinerText:prev_style', null).data('oneLinerText:animate_options', null).data('oneLinerText:yes', false);
-				}
-			}
-		}
-		return function oneLinerText(param) {
-			if (typeof param === "string") {
-				if (param === 'destroy') {
-					eachHandler._destroy = true;
-				}
-			}
-			this.each(eachHandler);
-			eachHandler._destroy = false;
-			return this;
-		};
-	}());
+    "use strict";
+    $.fn.oneLinerText = (function () {
+        var pool_of_span = (function () {
+            var pool = [], decoy = document.createElement('br');
+            return {
+                summon: function summon(parent) {
+                    var span, child;
+                    if (pool.length > 0) {
+                        span = pool.pop();
+                    } else {
+                        span = document.createElement('span');
+                        $.data(span, '$self', $(span).data('oneLinerText:animate_options', { scrollLeft: 0 }));
+                        span.setAttribute('style', 'display: inline-block; max-width: 100%; overflow-x: hidden; vertical-align: top; white-space: nowrap;');
+                    }
+                    child = parent.firstChild;
+                    while (child) {
+                        span.appendChild(child);
+                        child = parent.firstChild;
+                    }
+                    parent.appendChild(span);
+                    return span;
+                },
+                banish: function banish(span) {
+                    var parent = span.parentElement, gramps = parent.parentElement, child;
+                    gramps.replaceChild(decoy, parent); // Remove parent to avoid dom reflows when reattaching children
+                    parent.removeChild(span);
+                    child = span.firstChild;
+                    while (child) {
+                        parent.appendChild(child);
+                        child = span.firstChild;
+                    }
+                    gramps.replaceChild(parent, decoy); // Reattach parent to gramps
+                    pool.push(span);
+                    return this;
+                }
+            };
+        }()), min = Math.min;
+        function mouseHandler(event) {
+            /*jshint validthis: true*/
+            var pps = $.data(this, 'oneLinerText:pps'),
+                span = $.data(this, 'oneLinerText:span'),
+                $span = $.data(span, '$self'),
+                animate_options,
+                scrollLeftMax;
+            switch (event.type) {
+            case 'mousedown':
+                if (event.which === 2 && $span.is(':animated')) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    $span.stop(true);
+                }
+                break;
+            case 'mouseup':
+                if (event.which === 2) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+                /* falls through */
+            case 'mouseenter':
+                // http://stackoverflow.com/questions/5138373/how-do-i-get-the-max-value-of-scrollleft
+                animate_options = $span.data('oneLinerText:animate_options');
+                scrollLeftMax = span.scrollWidth - span.clientWidth;
+                animate_options.scrollLeft = scrollLeftMax;
+                $span.stop(true).animate(animate_options, (scrollLeftMax - span.scrollLeft) * pps, 'linear');
+                break;
+            case 'mouseleave':
+                animate_options = $span.data('oneLinerText:animate_options');
+                animate_options.scrollLeft = 0;
+                $span.stop(true).animate(animate_options, min(span.scrollLeft, 100), 'linear');
+                break;
+            }
+        }
+        function eachHandler() {
+            /*jshint validthis: true*/
+            var destroy = !!eachHandler._destroy,
+                style,
+                prev_ox,
+                prev_ws,
+                self = this,
+                $self = $.data(self, '$self');
+            if (!($self instanceof $)) {
+                $self = $(self);
+                $.data(self, '$self', $self);
+            }
+            if (!$self.data('oneLinerText:span')) {
+                if (!destroy) {
+                    style = self.style;
+                    prev_ox = style.overflowX;
+                    prev_ws = style.whiteSpace;
+                    style.overflowX = 'hidden';
+                    style.whiteSpace = 'nowrap';
+                    $self.data('oneLinerText:span', pool_of_span.summon(self)).data('oneLinerText:pps', eachHandler._pps).on('mousedown mouseup mouseenter mouseleave', mouseHandler).attr('data-one-liner-text', true);
+                    style.overflowX = prev_ox;
+                    style.whiteSpace = prev_ws;
+                }
+            } else {
+                if (destroy) {
+                    pool_of_span.banish($self.data('oneLinerText:span'));
+                    $self.removeData('oneLinerText:span').removeData('oneLinerText:pps').off('mousedown mouseup mouseenter mouseleave', mouseHandler).removeAttr('data-one-liner-text');
+                } else {
+                    if (eachHandler._overwrite) {
+                        $self.data('oneLinerText:pps', eachHandler._pps);
+                    }
+                }
+            }
+        }
+        return function oneLinerText(param) {
+            eachHandler._destroy = false;
+            eachHandler._pps = 1000 / 60;
+            eachHandler._overwrite = false;
+            switch (typeof param) {
+            case 'string':
+                if (param === 'destroy' || param === 'remove' || param === 'kill' || param === 'obliterate') {
+                    eachHandler._destroy = true;
+                }
+                break;
+            case 'number':
+                if (param > 0) {
+                    eachHandler._pps = 1000 / param;
+                    eachHandler._overwrite = true;
+                }
+                break;
+            default:
+                if (arguments.length) {
+                    throw new TypeError('Invalid parameter type');
+                }
+            }
+            this.each(eachHandler);
+            return this; // Allow method-chaining like most jQuery plugins and methods
+        };
+    }());
 }(typeof jQuery === "function" && jQuery));

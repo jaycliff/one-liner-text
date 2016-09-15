@@ -6,26 +6,29 @@
         <!-- <link rel="shortcut icon" href="https://myaccount.hetzner.co.za/favicon.ico" type="image/x-icon" /> -->
         <!-- <link rel="stylesheet" type="text/css" href="css/normal.css" /> -->
         <style type="text/css">
-            span.asot-wrap {
-				white-space: nowrap;
+			* {
+				font-family: Arial, Tahoma, Verdana;
+			}
+            h1 {
+				font-size: 16px;
+			}
+			#p-2 {
+				border: solid 1px #c0c0c0;
+				padding: 10px;
 			}
         </style>
-        <!-- <script type="text/javascript" src="lib/jquery-1.12.4.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-3.0.0.min.js"></script>
-        <script type="text/javascript" src="lib/jquery.domxy.js"></script>
-        <script type="text/javascript" src="lib/jquery.mousewheel.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-control-knob.js"></script> -->
         <script type="text/javascript" src="jquery-3.0.0.min.js"></script>
         <script type="text/javascript" src="jquery-one-liner-text.js"></script>
         <script type="text/javascript">
 			/*
 				REFERENCE(S):
 					http://remysharp.com/2008/09/10/the-silky-smooth-marquee/
+					http://stackoverflow.com/questions/10612380/get-rid-of-space-underneath-inline-block-image
 			*/
             (function (window, $) {
                 "use strict";
                 $(document).ready(function () {
-					$('.one-liner-text').oneLinerText();
+					$('.one-liner-text').oneLinerText(120);
                 });
             }(window, (typeof jQuery === "function") ? jQuery : {}));
         </script>
@@ -47,7 +50,10 @@
 			
 			In diam justo, auctor lacinia posuere vel, imperdiet sed mi. Sed maximus sem vitae nibh pulvinar porta. In quis turpis interdum, feugiat felis sed, gravida magna. Donec vel cursus elit, nec lobortis nisl. Pellentesque vel aliquam lectus. Cras elit lectus, ornare a ornare vitae, scelerisque non sapien. In facilisis auctor est vitae pharetra. Etiam vitae tellus nec velit aliquam varius. Etiam ut dapibus lectus.
 		</p>
-        <p id="p-3" class="one-liner-text" style="width: 320px; background-color: #f0f0f0">
+        <p id="p-3" class="one-liner-text" style="max-width: 320px; background-color: #f0f0f0">
+			I am quite alright... For now, at least...
+		</p>
+        <p id="p-4" class="one-liner-text" style="width: 320px; background-color: #f0f0f0">
 			I am fine.
 		</p>
     </body>
