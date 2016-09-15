@@ -72,9 +72,11 @@
                 }
                 break;
             case 'mouseup':
-                if (event.which === 2) {
+                if (event.which === 2 && !$span.is(':animated')) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
+                } else {
+                    break;
                 }
                 /* falls through */
             case 'mouseenter':
