@@ -17,7 +17,7 @@
     DEPENDENCIES:
         jQuery library
 */
-/*global jQuery*/
+/*global jQuery, HTMLCollection, NodeList, Element*/
 (function ($) {
     "use strict";
     $.fn.oneLinerText = (function () {
@@ -55,7 +55,7 @@
                     return this;
                 }
             };
-        }()), min = Math.min;
+        }()), oltDOM, hasOwnProperty = Object.prototype.hasOwnProperty, min = Math.min;
         function mouseHandler(event) {
             /*jshint validthis: true*/
             var pps = $.data(this, 'oneLinerText:pps'),
@@ -127,28 +127,46 @@
                 }
             }
         }
-        return function oneLinerText(param) {
-            eachHandler._destroy = false;
-            eachHandler._pps = 1000 / 60;
-            eachHandler._overwrite = false;
-            switch (typeof param) {
-            case 'string':
-                if (param === 'destroy' || param === 'remove' || param === 'kill' || param === 'obliterate') {
-                    eachHandler._destroy = true;
+        oltDOM = function oneLinerText(collection, param) {
+            var k, len;
+            if (collection instanceof $ || collection instanceof NodeList || collection instanceof HTMLCollection || (hasOwnProperty.call(collection, 'length') && typeof collection.length === "number" && collection.length > -1)) {
+                eachHandler._destroy = false;
+                eachHandler._pps = 1000 / 60;
+                eachHandler._overwrite = false;
+                switch (typeof param) {
+                case 'string':
+                    if (param === 'destroy' || param === 'remove' || param === 'kill' || param === 'obliterate') {
+                        eachHandler._destroy = true;
+                    }
+                    break;
+                case 'number':
+                    if (param > 0) {
+                        eachHandler._pps = 1000 / param;
+                        eachHandler._overwrite = true;
+                    }
+                    break;
+                default:
+                    if (arguments.length > 1) {
+                        throw new TypeError('Invalid parameter type');
+                    }
                 }
-                break;
-            case 'number':
-                if (param > 0) {
-                    eachHandler._pps = 1000 / param;
-                    eachHandler._overwrite = true;
+                for (k = 0, len = collection.length; k < len; k += 1) {
+                    eachHandler.call(collection[k]);
                 }
-                break;
-            default:
-                if (arguments.length) {
-                    throw new TypeError('Invalid parameter type');
+            } else {
+                if (collection instanceof Element) {
+                    eachHandler.call(collection);
                 }
             }
-            this.each(eachHandler);
+            return oneLinerText;
+        };
+        $.oneLinerText = oltDOM;
+        return function oneLinerText(param) {
+            if (arguments.length) {
+                oltDOM.call(null, this, param);
+            } else {
+                oltDOM.call(null, this);
+            }
             return this; // Allow method-chaining like most jQuery plugins and methods
         };
     }());
