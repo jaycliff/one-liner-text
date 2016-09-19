@@ -18,7 +18,7 @@
         jQuery library
 */
 /*global jQuery, HTMLCollection, NodeList, Element*/
-(function ($) {
+(function ($, NodeList, HTMLCollection, Element) {
     "use strict";
     $.fn.oneLinerText = (function () {
         var pool_of_span = (function () {
@@ -170,4 +170,4 @@
             return this; // Allow method-chaining like most jQuery plugins and methods
         };
     }());
-}(typeof jQuery === "function" && jQuery));
+}(typeof jQuery === "function" && jQuery, NodeList, HTMLCollection, Element));
