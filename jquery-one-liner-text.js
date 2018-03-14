@@ -1,5 +1,5 @@
 /*
-    Copyright 2016 Jaycliff Arcilla of Eversun Software Philippines Corporation
+    Copyright 2018 Jaycliff Arcilla of Eversun Software Philippines Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,44 +18,65 @@
         jQuery library
 */
 /*global jQuery, HTMLCollection, NodeList, Element*/
-(function ($, NodeList, HTMLCollection, Element) {
-    "use strict";
-    $.fn.oneLinerText = (function () {
-        var pool_of_span = (function () {
-            var pool = [], decoy = document.createElement('br');
-            return {
-                summon: function summon(parent) {
-                    var span, child;
-                    if (pool.length > 0) {
-                        span = pool.pop();
-                    } else {
-                        span = document.createElement('span');
-                        $.data(span, '$self', $(span).data('oneLinerText:animate_options', { scrollLeft: 0 }));
-                        span.setAttribute('style', 'display: inline-block; max-width: 100%; overflow-x: hidden; vertical-align: top; white-space: nowrap;');
-                    }
-                    child = parent.firstChild;
-                    while (child) {
-                        span.appendChild(child);
+if (typeof jQuery === "function" && jQuery.fn.oneLinerText !== "function") {
+    jQuery.fn.oneLinerText = (function (head, $, NodeList, HTMLCollection, Element) {
+        "use strict";
+        var style = document.createElement('style'),
+            oltDOM,
+            hasOwnProperty = Object.prototype.hasOwnProperty,
+            min = Math.min,
+            pool_of_span = (function () {
+                var pool = [], decoy = document.createElement('br');
+                return {
+                    summon: function summon(parent) {
+                        var span, child;
+                        if (pool.length > 0) {
+                            span = pool.pop();
+                        } else {
+                            span = document.createElement('span');
+                            $.data(span, '$self', $(span).data('oneLinerText:animate_options', { scrollLeft: 0 }));
+                            span.setAttribute('data-desc', 'one-liner-wrapper');
+                        }
                         child = parent.firstChild;
-                    }
-                    parent.appendChild(span);
-                    return span;
-                },
-                banish: function banish(span) {
-                    var parent = span.parentElement, gramps = parent.parentElement, child;
-                    gramps.replaceChild(decoy, parent); // Remove parent to avoid dom reflows when reattaching children
-                    parent.removeChild(span);
-                    child = span.firstChild;
-                    while (child) {
-                        parent.appendChild(child);
+                        while (child) {
+                            span.appendChild(child);
+                            child = parent.firstChild;
+                        }
+                        parent.appendChild(span);
+                        return span;
+                    },
+                    banish: function banish(span) {
+                        var parent = span.parentElement, gramps = parent.parentElement, child;
+                        gramps.replaceChild(decoy, parent); // Remove parent to avoid dom reflows when reattaching children
+                        parent.removeChild(span);
                         child = span.firstChild;
+                        while (child) {
+                            parent.appendChild(child);
+                            child = span.firstChild;
+                        }
+                        gramps.replaceChild(parent, decoy); // Reattach parent to gramps
+                        pool.push(span);
+                        return this;
                     }
-                    gramps.replaceChild(parent, decoy); // Reattach parent to gramps
-                    pool.push(span);
-                    return this;
-                }
-            };
-        }()), oltDOM, hasOwnProperty = Object.prototype.hasOwnProperty, min = Math.min;
+                };
+            }());
+        style.setAttribute('type', 'text/css');
+        style.setAttribute('id', 'one-liner-text-style');
+        style.textContent = ([
+            'span[data-desc="one-liner-wrapper"] {',
+            '    display: inline-block;',
+            '    max-width: 100%;',
+            '    overflow-x: hidden;',
+            '    -moz-transform: translateZ(0);',
+            '    -ms-transform: translateZ(0);',
+            '    -o-transform: translateZ(0);',
+            '    -webkit-transform: translateZ(0);',
+            '    transform: translateZ(0);',
+            '    vertical-align: top;',
+            '    white-space: nowrap;',
+            '}'
+        ]).join('\r\n');
+        head.appendChild(style);
         function mouseHandler(event) {
             /*jshint validthis: true*/
             var pps = $.data(this, 'oneLinerText:pps'),
@@ -169,5 +190,5 @@
             }
             return this; // Allow method-chaining like most jQuery plugins and methods
         };
-    }());
-}(typeof jQuery === "function" && jQuery, NodeList, HTMLCollection, Element));
+    }(document.getElementsByTagName('head')[0], jQuery, NodeList, HTMLCollection, Element));
+}
